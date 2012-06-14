@@ -1,5 +1,18 @@
 <?php
 
+/*
+Deezer API Wrapper - PHP
+http://developers.deezer.com/
+
+Created at 14-06-2012 on MusicHackDay BCN
+
+* Baptiste Bouillot : http://twitter.com/@bbbaptiste 
+* Aurelien Herault : http://twitter.com/dokydeezer
+
+All information about Deezer API :
+http://developers.deezer.com/api
+
+*/
 
 class deezerapi {
 
