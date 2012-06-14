@@ -49,7 +49,7 @@ class deezerapi {
 
 	public function postAlbumomment($album_id, $comment) {
 	
-	   	if (!is_numeric($id)) {
+	   	if (!is_numeric($album_id)) {
 			throw new Exception("Bad data",1);
 		}
 
