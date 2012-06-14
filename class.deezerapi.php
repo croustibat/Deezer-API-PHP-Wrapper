@@ -74,7 +74,17 @@ class deezerapi {
 	
 	}
 
-	public function getAlbum(){}
+	public function album( $id ) {
+
+	   	if (!is_numeric($id)) {
+			throw new Exception("Bad data",1);
+		}
+
+		$params = array();
+
+		return $this->_callMethod('album/'.$id, $params, 'get');
+
+	}
 
 	public function getFolder(){}
 
