@@ -104,7 +104,7 @@ class deezerapi {
 		$id = $args[0];
 		$params = array();
 
-		return $this->_callMethod($method'/'.$id, $params, 'get');
+		return $this->_callMethod($method.'/'.$id, $params, 'get');
 
 	}
 
