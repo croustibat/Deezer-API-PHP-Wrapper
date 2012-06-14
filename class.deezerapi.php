@@ -49,7 +49,7 @@ class deezerapi {
 			throw new Exception("Error Param isn't set or is empty", 1);
 		}
 
-
+		$params_post = '';
 		foreach($params as $key => $value) { 
 			$params_post .= $key.'='.$value.'&'; 
 		}
@@ -59,8 +59,8 @@ class deezerapi {
 
 			$ch = curl_init();
 
-			curl_setopt($ch,CURLOPT_URL,$this->urlapi.$method);
-			curl_setopt($ch,CURLOPT_POST,count($this->apiurl));
+			curl_setopt($ch,CURLOPT_URL,$this->apiurl.$method);
+			curl_setopt($ch,CURLOPT_POST, count($params)+1);
 			curl_setopt($ch,CURLOPT_POSTFIELDS,$params_post);
 
 			$result = curl_exec($ch);
