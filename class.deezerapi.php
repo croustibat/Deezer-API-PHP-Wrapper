@@ -62,7 +62,17 @@ class deezerapi {
 		return $this->_callMethod('album/'.$album_id.'/comments', $params, 'post');
 	}
 
-	public function getPlaylist(){}
+	public function playlist($id){
+
+		if (!is_numeric($id)) {
+			throw new Exception("Bad data",1);
+		}
+
+		$params = array();
+
+		return $this->_callMethod('playlist/'.$id, $params, 'get');
+	
+	}
 
 	public function getAlbum(){}
 
