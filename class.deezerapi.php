@@ -29,6 +29,11 @@ class deezerapi {
 
 	private final function call_method($method, $params = array()){
 
+		if(!isset($method) || empty($method)){
+			throw new Exception("Error Method isn't set or is empty", 1);
+		}
+
+
 
 	}
 
