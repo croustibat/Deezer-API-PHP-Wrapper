@@ -8,6 +8,8 @@ class deezerapi {
 			'app_secret' 	=> "YOUR_APP_SECRET",
 			'my_url'     	=> "YOUR_CALLBACK_URL"
 		);
+
+	private $apiurl = 'http://api.deezer.com/2.0/';
 	
 	public function __construct( $config = array() ){
 
@@ -19,7 +21,17 @@ class deezerapi {
 	}
 
 
-	public function getTrack(){}
+	public function getTrack( $id ) {
+
+	   if (!is_numeric($id)) {
+			throw new Exception("Bad ",1);
+		}
+
+		$params = array('id' => $id);
+
+		$this->_callMethod('track',$params);
+
+	}
 
 	public function getPlaylist(){}
 
@@ -27,13 +39,34 @@ class deezerapi {
 
 	public function getFolder(){}
 
-	private final function call_method($method, $params = array()){
+	private final function _callMethod( $method, $params ){
 
 		if(!isset($method) || empty($method)){
 			throw new Exception("Error Method isn't set or is empty", 1);
 		}
 
+		if(!isset($params) || !is_array($params)){
+			throw new Exception("Error Param isn't set or is empty", 1);
+		}
 
+
+		foreach($params as $key => $value) { 
+			$params_post .= $key.'='.$value.'&'; 
+		}
+
+		$params_post .= "request_method=get";
+
+		$ch = curl_init();
+
+		curl_setopt($ch,CURLOPT_URL,$this->url.$method);
+		curl_setopt($ch,CURLOPT_POST,count($this->apiurl));
+		curl_setopt($ch,CURLOPT_POSTFIELDS,$params_post);
+
+		$result = curl_exec($ch);
+
+		curl_close($ch);
+
+		return $result;
 
 	}
 
