@@ -22,31 +22,6 @@ class deezerapi {
 
 	}
 
-
-	public function track( $id ) {
-
-	   if (!is_numeric($id)) {
-			throw new Exception("Bad ",1);
-		}
-
-		$params = array();
-
-		return $this->_callMethod('track/'.$id, $params, 'get');
-
-	}
-
-	public function artist( $id ) {
-
-	   	if (!is_numeric($id)) {
-			throw new Exception("Bad data",1);
-		}
-
-		$params = array();
-
-		return $this->_callMethod('artist/'.$id, $params, 'get');
-
-	}
-
 	public function postAlbumComment($album_id, $comment) {
 	
 	   	if (!is_numeric($album_id)) {
@@ -62,53 +37,42 @@ class deezerapi {
 		return $this->_callMethod('album/'.$album_id.'/comments', $params, 'post');
 	}
 
-	public function playlist($id){
 
-		if (!is_numeric($id)) {
-			throw new Exception("Bad data",1);
+	/**
+	 * Use for get method only
+	 * 
+	 */
+	public function __call( $method, $args ){
+
+		$authorized_method = array(
+			"track",
+			"album",
+			"playlist",
+			"artist"
+		);
+		if(!in_array($method, $authorized_method)){
+			throw new Exception("Unauthorized method", 1);	
 		}
 
 		$params = array();
 
-		return $this->_callMethod('playlist/'.$id, $params, 'get');
-	
-	}
-
-	public function album( $id ) {
-
-	   	if (!is_numeric($id)) {
-			throw new Exception("Bad data",1);
+		if (!empty($args)) {
+			$id = array_shift($args);
+			
+		   	if (!is_numeric($id)) {
+				throw new Exception("Bad data",1);
+			}
+			
+			$params = $args; //put the rest of array even if empty
+			$ressource = $method.'/'.$id;
+		}
+		else{
+			$ressource = $method;
 		}
 
-		$params = array();
-
-		return $this->_callMethod('album/'.$id, $params, 'get');
+		return $this->_callMethod($ressource, $params, 'get');
 
 	}
-
-	// public function __call( $method, $args ){
-
-	//    	if (!is_numeric($id)) {
-	// 		throw new Exception("Bad data",1);
-	// 	}
-
-	// 	$authorized_method = array(
-	// 		"track",
-	// 		"album",
-	// 		"playlist"
-	// 	);
-	// 	if(!in_array($method, $authorized_method)){
-	// 		throw new Exception("Unauthorized method", 1);	
-	// 	}
-
-	// 	$id = $args[0];
-	// 	$params = array();
-
-	// 	return $this->_callMethod($method.'/'.$id, $params, 'get');
-
-	// }
-
-	public function getFolder(){}
 
 	public function setToken($access_token){
 
