@@ -10,6 +10,8 @@ class deezerapi {
 		);
 
 	private $apiurl = 'http://api.deezer.com/2.0/';
+
+	public $access_token = '';
 	
 	public function __construct( $config = array() ){
 
@@ -52,6 +54,26 @@ class deezerapi {
 
 	public function getFolder(){}
 
+	public function setToken($access_token){
+
+		if(!isset($access_token) || empty($access_token)){
+			throw new Exception("Invalid access token", 1);
+		}
+
+		$this->access_token = $access_token;
+
+		return true;
+	}
+
+	public function getToken(){
+
+		if($this->access_token){
+			return $this->access_token;
+		}else{
+			return false;
+		}
+	}
+
 	private final function _callMethod( $method, $params, $type ){
 
 		if(!isset($method) || empty($method)){
@@ -72,12 +94,19 @@ class deezerapi {
 		
 		}else{
 			/* POST METHOD */
+
+			$token = $this->getToken();
+
+			if($token == false){
+				throw new Exception("Token error", 1);
+			}
+
 			$params_post = '';
 			foreach($params as $key => $value) { 
 				$params_post .= $key.'='.$value.'&'; 
 			}
 
-			$params_post .= "request_method=get";
+			$params_post .= "access_token=".$token;
 
 
 			$ch = curl_init();
