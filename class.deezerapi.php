@@ -9,7 +9,7 @@ Created at 14-06-2012 on MusicHackDay BCN
 * Baptiste Bouillot : http://twitter.com/@bbbaptiste 
 * Aurelien Herault : http://twitter.com/dokydeezer
 
-All information about Deezer API :
+Deezer API Documentation & SDK:
 http://developers.deezer.com/api
 
 */
@@ -35,11 +35,20 @@ class deezerapi {
 
 	}
 
-	public function postAlbumComment($album_id, $comment) {
+	public function addComment($id, $type, $comment) {
 	
-	   	if (!is_numeric($album_id)) {
+	   	if (!is_numeric($id)) {
 			throw new Exception("Bad data",1);
 		}
+
+		if (!isset($type)) {
+			throw new Exception("Bad type",1);
+		}
+
+		if ($type != 'artist' || $type != 'album'){
+			throw new Exception("Type unknown",1);
+		}
+
 
 		// Sanitize string
 		$comment = strip_tags($comment);
@@ -47,7 +56,7 @@ class deezerapi {
 
 		$params = array("comment" => $comment);
 
-		return $this->_callMethod('album/'.$album_id.'/comments', $params, 'post');
+		return $this->_callMethod($type.'/'.$id.'/comments', $params, 'post');
 	}
 
 
