@@ -56,7 +56,7 @@ class deezerapi {
 
 		$params_post .= "request_method=get";
 
-		try{
+
 			$ch = curl_init();
 
 			curl_setopt($ch,CURLOPT_URL,$this->urlapi.$method);
@@ -66,7 +66,7 @@ class deezerapi {
 			$result = curl_exec($ch);
 
 			curl_close($ch);
-		}
+	
 
 		return $result;
 
