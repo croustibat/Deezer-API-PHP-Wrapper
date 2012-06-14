@@ -27,9 +27,9 @@ class deezerapi {
 			throw new Exception("Bad ",1);
 		}
 
-		$params = array('id' => $id);
+		$params = array();
 
-		$this->_callMethod('track',$params);
+		return $this->_callMethod('track/'.$id, $params, 'get');
 
 	}
 
@@ -39,7 +39,7 @@ class deezerapi {
 
 	public function getFolder(){}
 
-	private final function _callMethod( $method, $params ){
+	private final function _callMethod( $method, $params, $type ){
 
 		if(!isset($method) || empty($method)){
 			throw new Exception("Error Method isn't set or is empty", 1);
@@ -49,12 +49,22 @@ class deezerapi {
 			throw new Exception("Error Param isn't set or is empty", 1);
 		}
 
-		$params_post = '';
-		foreach($params as $key => $value) { 
-			$params_post .= $key.'='.$value.'&'; 
+		if(!isset($type)){
+			throw new Exception("Error Type isn't set", 1);
 		}
 
-		$params_post .= "request_method=get";
+		if($type == 'get'){
+			/* GET METHOD */
+			$result = json_decode(file_get_contents($this->apiurl.$method));
+		
+		}else{
+			/* POST METHOD */
+			$params_post = '';
+			foreach($params as $key => $value) { 
+				$params_post .= $key.'='.$value.'&'; 
+			}
+
+			$params_post .= "request_method=get";
 
 
 			$ch = curl_init();
@@ -63,14 +73,15 @@ class deezerapi {
 			curl_setopt($ch,CURLOPT_POST, count($params)+1);
 			curl_setopt($ch,CURLOPT_POSTFIELDS,$params_post);
 
-			$result = curl_exec($ch);
+			$result = json_decode(curl_exec($ch));
 
 			curl_close($ch);
-	
+		}
 
 		return $result;
 
 	}
+
 
 }
 
