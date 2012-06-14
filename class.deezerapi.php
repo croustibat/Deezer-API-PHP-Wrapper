@@ -21,7 +21,7 @@ class deezerapi {
 	}
 
 
-	public function getTrack( $id ) {
+	public function track( $id ) {
 
 	   if (!is_numeric($id)) {
 			throw new Exception("Bad ",1);
@@ -32,6 +32,19 @@ class deezerapi {
 		return $this->_callMethod('track/'.$id, $params, 'get');
 
 	}
+
+	public function artist( $id ) {
+
+	   if (!is_numeric($id)) {
+			throw new Exception("Bad ",1);
+		}
+
+		$params = array();
+
+		return $this->_callMethod('artist/'.$id, $params, 'get');
+
+	}
+
 
 	public function getPlaylist(){}
 
