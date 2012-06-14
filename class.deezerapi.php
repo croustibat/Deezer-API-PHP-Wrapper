@@ -37,8 +37,8 @@ class deezerapi {
 
 	public function artist( $id ) {
 
-	   if (!is_numeric($id)) {
-			throw new Exception("Bad ",1);
+	   	if (!is_numeric($id)) {
+			throw new Exception("Bad data",1);
 		}
 
 		$params = array();
@@ -47,6 +47,20 @@ class deezerapi {
 
 	}
 
+	public function postAlbumomment($album_id, $comment) {
+	
+	   	if (!is_numeric($id)) {
+			throw new Exception("Bad data",1);
+		}
+
+		// Sanitize string
+		$comment = strip_tags($comment);
+		$comment = filter_var($comment, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
+
+		$params = array("comment" => $comment);
+
+		return $this->_callMethod('album/'.$album_id.'/comments', $params, 'post');
+	}
 
 	public function getPlaylist(){}
 
