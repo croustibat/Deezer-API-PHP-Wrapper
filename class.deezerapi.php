@@ -56,15 +56,17 @@ class deezerapi {
 
 		$params_post .= "request_method=get";
 
-		$ch = curl_init();
+		try{
+			$ch = curl_init();
 
-		curl_setopt($ch,CURLOPT_URL,$this->url.$method);
-		curl_setopt($ch,CURLOPT_POST,count($this->apiurl));
-		curl_setopt($ch,CURLOPT_POSTFIELDS,$params_post);
+			curl_setopt($ch,CURLOPT_URL,$this->urlapi.$method);
+			curl_setopt($ch,CURLOPT_POST,count($this->apiurl));
+			curl_setopt($ch,CURLOPT_POSTFIELDS,$params_post);
 
-		$result = curl_exec($ch);
+			$result = curl_exec($ch);
 
-		curl_close($ch);
+			curl_close($ch);
+		}
 
 		return $result;
 
