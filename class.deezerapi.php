@@ -159,35 +159,58 @@ class deezerapi {
 			throw new Exception("Error Type isn't set", 1);
 		}
 
-		if($type == 'get'){
-			/* GET METHOD */
-			$result = json_decode(file_get_contents($this->apiurl.$method));		
-		}else{
-			/* POST METHOD */
+		switch($type){
 
-			$token = $this->getToken();
+			case 'get':
+				$result = json_decode(file_get_contents($this->apiurl.$method));	
+			break;
 
-			if($token == false){
-				throw new Exception("Token error", 1);
-			}
+			case 'post':
 
-			$params_post = '';
-			foreach($params as $key => $value) { 
-				$params_post .= $key.'='.$value.'&'; 
-			}
+				$token = $this->getToken();
 
-			$params_post .= "access_token=".$token;
+				if($token == false){
+					throw new Exception("Token error", 1);
+				}
+
+				$params_post = '';
+				foreach($params as $key => $value) { 
+					$params_post .= $key.'='.$value.'&'; 
+				}
+
+				$params_post .= "access_token=".$token;
 
 
-			$ch = curl_init();
+				$ch = curl_init();
 
-			curl_setopt($ch,CURLOPT_URL,$this->apiurl.$method);
-			curl_setopt($ch,CURLOPT_POST, count($params)+1);
-			curl_setopt($ch,CURLOPT_POSTFIELDS,$params_post);
+				curl_setopt($ch, CURLOPT_URL, $this->apiurl.$method);
+				curl_setopt($ch, CURLOPT_POST, count($params)+1);
+				curl_setopt($ch, CURLOPT_POSTFIELDS, $params_post);
 
-			$result = json_decode(curl_exec($ch));
+				$result = json_decode(curl_exec($ch));
 
-			curl_close($ch);
+				curl_close($ch);
+
+			break;
+
+			case 'delete':
+
+				$token = $this->getToken();
+
+				if($token == false){
+					throw new Exception("Token error", 1);
+				}
+
+				$ch = curl_init();
+
+				curl_setopt($ch, CURLOPT_URL, $this->apiurl.$method);
+				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
+
+				$result = json_decode(curl_exec($ch));
+
+				curl_close($ch);	 	
+
+			break;
 		}
 
 		return $result;
