@@ -6,7 +6,7 @@ http://developers.deezer.com/
 
 Created at 14-06-2012 on MusicHackDay BCN
 
-* Baptiste Bouillot : http://twitter.com/@bbbaptiste 
+* Baptiste Bouillot : http://twitter.com/bbbaptiste 
 * Aurelien Herault : http://twitter.com/dokydeezer
 
 Deezer API Documentation & SDK:
@@ -17,9 +17,9 @@ http://developers.deezer.com/api
 class deezerapi {
 
 	public $config = array(
-			'app_id' 		=> "YOUR_APP_ID",
+			'app_id'		=> "YOUR_APP_ID",
 			'app_secret' 	=> "YOUR_APP_SECRET",
-			'my_url'     	=> "YOUR_CALLBACK_URL"
+			'my_url' 		=> "YOUR_CALLBACK_URL"
 		);
 
 	private $apiurl = 'http://api.deezer.com/2.0/';
@@ -48,7 +48,6 @@ class deezerapi {
 		if ($type != 'artist' || $type != 'album'){
 			throw new Exception("Type unknown",1);
 		}
-
 
 		// Sanitize string
 		$comment = strip_tags($comment);
