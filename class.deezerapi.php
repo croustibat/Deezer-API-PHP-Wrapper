@@ -58,18 +58,47 @@ class deezerapi {
 		return $this->_callMethod($type.'/'.$id.'/comments', $params, 'post');
 	}
 
+	public function search($term, $context = '', $order = 'RANKING') {
+		$order_available = "RANKING, TRACK_ASC, TRACK_DESC, ARTIST_ASC, ARTIST_DESC, ALBUM_ASC, ALBUM_DESC, RATING_ASC, RATING_DESC, DURATION_ASC, DURATION_DESC";
+		
+		// force order if not in list
+		if (substr_count($order, $order_available) == 0) {
+			$order = 'RANKING';
+		}
+
+		$params = array(
+			'q' => $term,
+			'order' => $order,
+			'request_method' => 'get'
+		);
+
+		if ($context) {
+			$ressource = "search/$context";
+		}
+		else{
+			$ressource = "search";
+		}
+		return $this->_callMethod($ressource, $params, 'post');		
+	}
 
 	/**
 	 * Use for get method only
 	 * 
 	 */
-	public function __call( $method, $args ){
+	public function __call($method, $args){
 
 		$authorized_method = array(
 			"track",
 			"album",
 			"playlist",
-			"artist"
+			"artist",
+			"comment",
+			"editorial",
+			"folder",
+			"genre",
+			"radio",
+			//"search", 
+			"user"
 		);
 		if(!in_array($method, $authorized_method)){
 			throw new Exception("Unauthorized method", 1);	
@@ -78,6 +107,7 @@ class deezerapi {
 		$params = array();
 
 		if (!empty($args)) {
+			
 			$id = array_shift($args);
 			
 		   	if (!is_numeric($id)) {
@@ -86,6 +116,7 @@ class deezerapi {
 			
 			$params = $args; //put the rest of array even if empty
 			$ressource = $method.'/'.$id;
+		
 		}
 		else{
 			$ressource = $method;
@@ -131,8 +162,7 @@ class deezerapi {
 
 		if($type == 'get'){
 			/* GET METHOD */
-			$result = json_decode(file_get_contents($this->apiurl.$method));
-		
+			$result = json_decode(file_get_contents($this->apiurl.$method));		
 		}else{
 			/* POST METHOD */
 
