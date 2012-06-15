@@ -66,7 +66,7 @@ class deezerapi {
 
 		$params = array();
 
-		if (!preg_match('/(get|set|delete)(.*)/',$method, $matches)) {
+		if (!preg_match('/(get|add|delete)(.*)/',$method, $matches)) {
 			throw new Exception("Looks like you call inexisting method", 1);				
 		}
 
@@ -101,13 +101,19 @@ class deezerapi {
 			if (!empty($args)) {
 				
 				$id = array_shift($args);
-				
+					
 			   	if (!is_numeric($id)) {
 					throw new Exception("Bad data",1);
 				}
-				
-				$params = $args; //put the rest of array even if empty
-				$ressource = $method.'/'.$id;
+
+				$connection = array_shift($args);
+
+				if ($connection) {
+					$ressource = $method.'/'.$id.'/'.$connection;
+				}
+				else {
+					$ressource = $method.'/'.$id;
+				}
 			
 			}
 			else {
@@ -116,7 +122,7 @@ class deezerapi {
 
 			return $this->_callMethod($ressource, $params, 'get');
 		}
-		elseif ($type == 'set') {
+		elseif ($type == 'add') {
 			
 			$id = array_shift($args);
 			$context = array_shift($args);
@@ -171,7 +177,6 @@ class deezerapi {
 		
 		if (empty($title)) {
 			throw new Exception("You must provide a valid title.", 1);
-			
 		}
 
 		return $this->_add('user/me/playlists', null, "title", $title);	
