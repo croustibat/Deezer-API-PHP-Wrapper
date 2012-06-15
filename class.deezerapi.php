@@ -88,43 +88,54 @@ class deezerapi {
 	 */
 	public function __call($method, $args){
 
-		$authorized_method = array(
-			"track",
-			"album",
-			"playlist",
-			"artist",
-			"comment",
-			"editorial",
-			"folder",
-			"genre",
-			"radio",
-			//"search", 
-			"user"
-		);
-		if(!in_array($method, $authorized_method)){
-			throw new Exception("Unauthorized method", 1);	
+		if(!preg_match('/(get|set)(.*)/',$method, $matches){
+			throw new Exception("Looks like you call inexisting method", 1);				
 		}
 
-		$params = array();
+		$type 	= $matches[1];
+		$method = $matches[2];
 
-		if (!empty($args)) {
-			
-			$id = array_shift($args);
-			
-		   	if (!is_numeric($id)) {
-				throw new Exception("Bad data",1);
+		if( $type == 'get') {
+			$authorized_method = array(
+				"track",
+				"album",
+				"playlist",
+				"artist",
+				"comment",
+				"editorial",
+				"folder",
+				"genre",
+				"radio",
+				//"search", 
+				"user"
+			);
+			if(!in_array($method, $authorized_method)){
+				throw new Exception("Unauthorized method", 1);	
 			}
+
+			$params = array();
+
+			if (!empty($args)) {
+				
+				$id = array_shift($args);
+				
+			   	if (!is_numeric($id)) {
+					throw new Exception("Bad data",1);
+				}
+				
+				$params = $args; //put the rest of array even if empty
+				$ressource = $method.'/'.$id;
 			
-			$params = $args; //put the rest of array even if empty
-			$ressource = $method.'/'.$id;
-		
-		}
-		else{
-			$ressource = $method;
-		}
+			}
+			else{
+				$ressource = $method;
+			}
 
-		return $this->_callMethod($ressource, $params, 'get');
-
+			return $this->_callMethod($ressource, $params, 'get');
+		}
+		else if( $type == 'set') {
+			
+		}
 	}
 
 	public function setToken($access_token){
