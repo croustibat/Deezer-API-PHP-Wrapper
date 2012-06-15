@@ -28,7 +28,7 @@ class deezerapi {
 	
 	public function __construct( $config = array() ){
 
-		// surcharge config si present
+		// override config
 		if (!empty($config)) {
 			$this->config = $config;
 		}
@@ -64,47 +64,77 @@ class deezerapi {
 	 */
 	public function __call($method, $args){
 
-		$authorized_method = array(
-			"track",
-			"album",
-			"playlist",
-			"artist",
-			"comment",
-			"editorial",
-			"folder",
-			"genre",
-			"radio", 
-			"user"
-		);
-		if(!in_array($method, $authorized_method)){
-			throw new Exception("Unauthorized method", 1);	
-		}
-
 		$params = array();
 
-		if (!empty($args)) {
-			
-			$id = array_shift($args);
-			
-		   	if (!is_numeric($id)) {
-				throw new Exception("Bad data",1);
+		if (!preg_match('/(get|set|delete)(.*)/',$method, $matches)) {
+			throw new Exception("Looks like you call inexisting method", 1);				
+		}
+
+		$type 	= strtolower($matches[1]);
+		$method = strtolower($matches[2]);
+
+		if ( $type == 'get') {
+
+			$authorized_method = array(
+				"track",
+				"album",
+				"playlist",
+				"artist",
+				"comment",
+				"editorial",
+				"folder",
+				"genre",
+				"radio",
+				"user"
+			);
+
+			if (!in_array($method, $authorized_method)) {
+				throw new Exception("Unauthorized method", 1);	
 			}
 			
-			$params = $args; //put the rest of array even if empty
-			$ressource = $method.'/'.$id;
-		
-		}
-		else{
-			$ressource = $method;
-		}
+			if ($method == 'user') {
+				$method = 'user/me';
+			}
 
-		return $this->_callMethod($ressource, $params, 'get');
+			$params = array();
 
+			if (!empty($args)) {
+				
+				$id = array_shift($args);
+				
+			   	if (!is_numeric($id)) {
+					throw new Exception("Bad data",1);
+				}
+				
+				$params = $args; //put the rest of array even if empty
+				$ressource = $method.'/'.$id;
+			
+			}
+			else {
+				$ressource = $method;
+			}
+
+			return $this->_callMethod($ressource, $params, 'get');
+		}
+		elseif ($type == 'set') {
+			
+			$id = array_shift($args);
+			$context = array_shift($args);
+			$content = array_shift($args);
+			
+			return $this->_add($method, $id, $context, $content);
+		}
+		elseif ($type == 'delete') {
+
+			$id = array_shift($args);
+
+			return $this->_callMethod($method.'/'.$id, $params, 'delete');
+		}
 	}
 
 	public function setToken($access_token){
 
-		if(!isset($access_token) || empty($access_token)){
+		if (!isset($access_token) || empty($access_token)) {
 			throw new Exception("Invalid access token", 1);
 		}
 
@@ -115,11 +145,36 @@ class deezerapi {
 
 	public function getToken(){
 
-		if($this->access_token){
+		if ($this->access_token) {
 			return $this->access_token;
 		}else{
 			return false;
 		}
+	}
+
+	public function addFolder($title){
+
+		$title = strip_tags($title);
+		
+		if (empty($title)) {
+			throw new Exception("You must provide a valid title.", 1);
+			
+		}
+
+		return $this->_add('user/me/folders', null, "title", $title);	
+	}
+
+
+	public function addPlaylist($title){
+
+		$title = strip_tags($title);
+		
+		if (empty($title)) {
+			throw new Exception("You must provide a valid title.", 1);
+			
+		}
+
+		return $this->_add('user/me/playlists', null, "title", $title);	
 	}
 
 	/* Private function to add, create element in Deezer API*/
@@ -129,10 +184,14 @@ class deezerapi {
 		$result = false;
 
 		if ($id == null){
-
+			if (isset($context) && isset($content)) {
+				$content = strip_tags($content);
+				$params  = array("$context" => $content);
+			}
 			$result = $this->_callMethod($type, $params, 'post');	
 
-		}elseif( isset($id) && isset($context) && isset($content) ){
+		}
+		elseif (isset($id) && isset($context) && isset($content)) {
 
 			$content = strip_tags($content);
 			$params  = array("$context" => $content);
@@ -141,7 +200,6 @@ class deezerapi {
 		}
 
 		return $result;
-
 	}
 
 	/* Private function to call Deezer API with cURL */
@@ -159,17 +217,23 @@ class deezerapi {
 			throw new Exception("Error Type isn't set", 1);
 		}
 
+		$token = $this->getToken();
+
 		switch($type){
 
 			case 'get':
-				$result = json_decode(file_get_contents($this->apiurl.$method));	
+
+				$url = $this->apiurl.$method;
+				if ($token) {
+					$url .= "?access_token=".$token;
+				}
+				$result = json_decode(file_get_contents($url));	
+			
 			break;
 
 			case 'post':
 
-				$token = $this->getToken();
-
-				if($token == false){
+				if($token === false){
 					throw new Exception("Token error", 1);
 				}
 
@@ -177,9 +241,7 @@ class deezerapi {
 				foreach($params as $key => $value) { 
 					$params_post .= $key.'='.$value.'&'; 
 				}
-
 				$params_post .= "access_token=".$token;
-
 
 				$ch = curl_init();
 
@@ -195,16 +257,14 @@ class deezerapi {
 
 			case 'delete':
 
-				$token = $this->getToken();
-
-				if($token == false){
+				if($token === false){
 					throw new Exception("Token error", 1);
 				}
 
 
 				$ch = curl_init();
 
-				curl_setopt($ch, CURLOPT_URL,$this->apiurl.$method);
+				curl_setopt($ch, CURLOPT_URL, $this->apiurl.$method."&access_token=".$token);
 				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
 
 				$result = json_decode(curl_exec($ch));
