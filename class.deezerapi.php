@@ -35,29 +35,6 @@ class deezerapi {
 
 	}
 
-	public function addComment($id, $type, $comment) {
-	
-	   	if (!is_numeric($id)) {
-			throw new Exception("Bad data",1);
-		}
-
-		if (!isset($type)) {
-			throw new Exception("Bad type",1);
-		}
-
-		if ($type != 'artist' || $type != 'album'){
-			throw new Exception("Type unknown",1);
-		}
-
-		// Sanitize string
-		$comment = strip_tags($comment);
-		$comment = filter_var($comment, FILTER_SANITIZE_STRING, FILTER_FLAG_STRIP_LOW);
-
-		$params = array("comment" => $comment);
-
-		return $this->_callMethod($type.'/'.$id.'/comments', $params, 'post');
-	}
-
 	public function search($term, $context = '', $order = 'RANKING') {
 		$order_available = "RANKING, TRACK_ASC, TRACK_DESC, ARTIST_ASC, ARTIST_DESC, ALBUM_ASC, ALBUM_DESC, RATING_ASC, RATING_DESC, DURATION_ASC, DURATION_DESC";
 		
@@ -96,8 +73,7 @@ class deezerapi {
 			"editorial",
 			"folder",
 			"genre",
-			"radio",
-			//"search", 
+			"radio", 
 			"user"
 		);
 		if(!in_array($method, $authorized_method)){
@@ -146,6 +122,29 @@ class deezerapi {
 		}
 	}
 
+	/* Private function to add, create element in Deezer API*/
+	private final function _add($type, $id=null, $context=null, $content=null) {
+		
+		$params = array();
+		$result = false;
+
+		if ($id == null){
+
+			$result = $this->_callMethod($type, $params, 'post');	
+
+		}elseif( isset($id) && isset($context) && isset($content) ){
+
+			$content = strip_tags($content);
+			$params  = array("$context" => $content);
+			$result  = $this->_callMethod($type.'/'.$id.'/'.$context, $params, 'post');
+			
+		}
+
+		return $result;
+
+	}
+
+	/* Private function to call Deezer API with cURL */
 	private final function _callMethod( $method, $params, $type ){
 
 		if(!isset($method) || empty($method)){
