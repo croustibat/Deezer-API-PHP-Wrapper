@@ -169,8 +169,18 @@ class deezerapi {
 		return $this->_add('user/me/folders', null, "title", $title);	
 	}
 
-	public function getFolder() {
-
+	public function getFolder($id = null, $context = null) {
+		if ($id && is_numeric($id)) {
+			if ($context) {
+				return $this->_callMethod('folder/'.$id.'/items', array(), 'get');
+			}
+			else{
+				return $this->_callMethod('folder/'.$id, array(), 'get');
+			}
+		}
+		else{
+			return $this->_callMethod('user/me/folders', array(), 'get');
+		}
 	}
 
 
@@ -186,8 +196,18 @@ class deezerapi {
 	}
 
 
-	public function getPlaylist() {
-
+	public function getPlaylist($id = null, $context = null) {
+		if ($id && is_numeric($id)) {
+			if ($context) {
+				return $this->_callMethod('playlist/'.$id.'/'.$context, array(), 'get');
+			}
+			else{
+				return $this->_callMethod('playlist/'.$id, array(), 'get');
+			}
+		}
+		else{
+			return $this->_callMethod('user/me/playlists', array(), 'get');
+		}
 	}
 
 	/* Private function to add, create element in Deezer API*/
@@ -291,6 +311,4 @@ class deezerapi {
 	}
 
 
-}
-
-?>
+} //end of class deezerapi
