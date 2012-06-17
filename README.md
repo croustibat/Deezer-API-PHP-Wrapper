@@ -10,7 +10,8 @@ How to use the wrapper
 
 Download or fork this project. Then just require the class.deezerapi.php in your project and start use it like that :
 
-`require 'class.deezerapi.php';
+````php
+require 'class.deezerapi.php';
 
 $config = array(
         "app_id"        => YOUR API KEY,
@@ -18,10 +19,10 @@ $config = array(
         "my_url"        => YOUR DOMAIN NAME or localhost
 );
 
-$dz = new deezerapi($config);`
+$dz = new deezerapi($config);
+````
 
-
-You should also read the method.md file to see what you can do with the wrapper. 
+You should also read the [method.md](https://github.com/croustibat/Deezer-API-PHP-Wrapper/blob/master/method.md) file to see what you can do with the wrapper. 
 
 Sources
 ---------------------
