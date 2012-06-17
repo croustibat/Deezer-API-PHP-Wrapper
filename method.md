@@ -1,12 +1,13 @@
-Album Method :
+Album Method
+============
 
 Global function :
 
-getAlbum($id, $connection)
+`getAlbum($id, $connection)`
  $id => Album id (int)
  $connection => String of connection (tracks, fans, comments)
 
-getAlbum($id) : Get metadata from album 
+`getAlbum($id)` : Get metadata from album 
  $id => Album id (int)
 
 getAlbum($id, 'tracks') : Get list of tracks from album
@@ -23,6 +24,7 @@ setAlbum($id, 'comments', $value) : Add comment
  $value => Comment (string)
 
 Artist Method
+=============
 
 Global function :
 
@@ -55,12 +57,14 @@ setArtist($id, 'comments', $value) : Add comment
  $id => Artist id (int)
  $value => Comment (string)
 
-Comments Method :
+Comments Method
+===============
 
 getComment($id) : Get comment data
  $id => comment id (int)
 
-Editorial Method :
+Editorial Method
+================
 
 Notice : all editorial methods are geolocalised by country
 
@@ -75,7 +79,9 @@ getEditorial($id, 'selection') : get list of album of editorial selection from g
 getEditorial($id, 'charts') : get list of top charts (tracks, albums, artists) of editorial selection from genre
  $id => editorial id (int)
 
-Folder Method :
+Folder Method
+=============
+
 Notice : To access this method, you should have a valid access token 
 
 getFolder() : get list of user folder
@@ -97,8 +103,9 @@ getFolder($id, 'items') : get list albums or playlist in the user folder
  Permission : basic_access
  $id => folder id
 
-Genre Method :
-	
+Genre Method
+============
+
  Notice : all genre methods are geolocalised by country
 
  getGenre : get list of genre
@@ -109,7 +116,9 @@ Genre Method :
  getGenre($id, 'artist') : get list of artist for selected genre
  $id => genre id
 
-Playlist Method :
+Playlist Method
+===============
+
 Notice : To access this method, you should have a valid access token 
 
  getPlaylist() : get list of playlists for user
@@ -138,7 +147,8 @@ Notice : To access this method, you should have a valid access token
  $id => playlist id (int)
  a$value => comment (string)
 
-Radio Method :
+Radio Method
+============
  
  getRadio() : get list of radio (geolocated)
 
