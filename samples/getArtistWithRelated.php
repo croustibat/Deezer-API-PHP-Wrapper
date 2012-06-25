@@ -1,17 +1,12 @@
 <?php
-require 'class.deezerapi.php';
+// do not need an APP ID or access token for that
 
-// get your config data by creating a project here :
-// http://developers.deezer.com/myapps 
-$config = array(
-        "app_id"        => YOUR_APP_ID,
-        "app_secret"    => "YOUR_SECRET_KEY",
-        "my_url"        => "http://YOUR_DOMAIN" //you must specify the same domain as in your apps (it could be localhost)
-);
+require '../class.deezerapi.php';
 
 $artist_id = $_GET['artist_id']; // script is called with artist id args 
 
-$dz = new deezerapi($config);
+$dz = new deezerapi();
+
 $artist = $dz->getArtist($artist_id); // main artist
 
 $related = $dz->getArtist($artist_id, 'related'); // here we fetch the related artists 

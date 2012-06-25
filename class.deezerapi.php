@@ -252,7 +252,7 @@ class deezerapi {
 
 		$token = $this->getToken();
 
-		switch($type){
+		switch ($type) {
 
 			case 'get':
 
@@ -266,7 +266,7 @@ class deezerapi {
 
 			case 'post':
 
-				if($token === false){
+				if ($token === false) {
 					throw new Exception("Token error", 1);
 				}
 
@@ -290,7 +290,7 @@ class deezerapi {
 
 			case 'delete':
 
-				if($token === false){
+				if ($token === false) {
 					throw new Exception("Token error", 1);
 				}
 
