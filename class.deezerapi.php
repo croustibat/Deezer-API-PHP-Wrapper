@@ -286,6 +286,7 @@ class deezerapi {
 				curl_setopt($ch, CURLOPT_URL, $this->apiurl.$method);
 				curl_setopt($ch, CURLOPT_POST, count($params)+1);
 				curl_setopt($ch, CURLOPT_POSTFIELDS,$params_post);
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
 				$result = json_decode(curl_exec($ch));
 
