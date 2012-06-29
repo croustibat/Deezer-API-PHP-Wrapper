@@ -266,16 +266,21 @@ class deezerapi {
 
 			case 'post':
 
-				if ($token === false) {
-					throw new Exception("Token error", 1);
-				}
 
 				$params_post = '';
 				foreach($params as $key => $value) { 
 					$params_post .= $key.'='.$value.'&'; 
 				}
-				$params_post .= "access_token=".$token;
 
+				// token is not required for search
+				if (strpos($method, 'search') === false) {
+					if ($token === false) {
+						throw new Exception("Token error", 1);
+					} else {
+						$params_post .= "access_token=".$token;
+					}
+				}
+				
 				$ch = curl_init();
 
 				curl_setopt($ch, CURLOPT_URL, $this->apiurl.$method);
