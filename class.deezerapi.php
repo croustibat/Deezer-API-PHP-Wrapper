@@ -210,6 +210,15 @@ class deezerapi {
 		}
 	}
 
+	public function getUser($context = null) {
+		if ($context) {
+			return $this->_callMethod('user/me/'.$context, array(), 'get');
+		}
+		else{
+			return $this->_callMethod('user/me', array(), 'get');
+		}
+	}
+	
 	/* Private function to add, create element in Deezer API*/
 	private final function _add($type, $id=null, $context=null, $content=null) {
 		
