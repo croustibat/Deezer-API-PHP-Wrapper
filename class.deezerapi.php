@@ -26,6 +26,8 @@ class deezerapi {
 
 	public $access_token = '';
 	
+	public $output_format = 'array'; // set to json to get json string 
+	
 	public function __construct( $config = array() ){
 
 		// override config
@@ -195,7 +197,6 @@ class deezerapi {
 		return $this->_add('user/me/playlists', null, "title", $title);	
 	}
 
-
 	public function getPlaylist($id = null, $context = null) {
 		if ($id && is_numeric($id)) {
 			if ($context) {
@@ -225,7 +226,8 @@ class deezerapi {
 		$params = array();
 		$result = false;
 
-		if ($id == null){
+		if ($id == null) {
+
 			if (isset($context) && isset($content)) {
 				$content = strip_tags($content);
 				$params  = array("$context" => $content);
@@ -235,8 +237,12 @@ class deezerapi {
 		}
 		elseif (isset($id) && isset($context) && isset($content)) {
 
-			$content = strip_tags($content);
-			$params  = array("$context" => $content);
+			if (is_array($content)) {
+				$params = $content;
+			} else {
+				$content = strip_tags($content);
+				$params  = array("$context" => $content);
+			} 
 			$result  = $this->_callMethod($type.'/'.$id.'/'.$context, $params, 'post');
 			
 		}
@@ -269,12 +275,16 @@ class deezerapi {
 				if ($token) {
 					$url .= "?access_token=".$token;
 				}
-				$result = json_decode(file_get_contents($url));	
-			
+				if ($this->output_format == 'json') {
+
+					$result = file_get_contents($url);
+				}
+				else {
+					$result = json_decode(file_get_contents($url));	
+				}
 			break;
 
 			case 'post':
-
 
 				$params_post = '';
 				foreach($params as $key => $value) { 
@@ -289,7 +299,6 @@ class deezerapi {
 						$params_post .= "access_token=".$token;
 					}
 				}
-				
 				$ch = curl_init();
 
 				curl_setopt($ch, CURLOPT_URL, $this->apiurl.$method);
@@ -297,7 +306,12 @@ class deezerapi {
 				curl_setopt($ch, CURLOPT_POSTFIELDS,$params_post);
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 
-				$result = json_decode(curl_exec($ch));
+				if ($this->output_format == 'json') {
+					$result = curl_exec($ch);
+				}
+				else {
+					$result = json_decode(curl_exec($ch));
+				}
 
 				curl_close($ch);
 
@@ -309,14 +323,18 @@ class deezerapi {
 					throw new Exception("Token error", 1);
 				}
 
-
 				$ch = curl_init();
 
-				curl_setopt($ch, CURLOPT_URL, $this->apiurl.$method."&access_token=".$token);
+				curl_setopt($ch, CURLOPT_URL, $this->apiurl.$method."?access_token=".$token);
 				curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "DELETE");
-
-				$result = json_decode(curl_exec($ch));
-
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+				
+				if ($this->output_format == 'json') {
+					$result = curl_exec($ch);
+				}
+				else {
+					$result = json_decode(curl_exec($ch));
+				}
 				curl_close($ch);	 	
 
 			break;
