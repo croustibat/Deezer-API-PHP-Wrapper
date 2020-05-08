@@ -22,7 +22,7 @@ class deezerapi {
 			'my_url' 		=> "YOUR_CALLBACK_URL"
 		);
 
-	private $apiurl = 'http://api.deezer.com/2.0/';
+	private $apiurl = 'https://api.deezer.com/';
 
 	public $access_token = '';
 	
